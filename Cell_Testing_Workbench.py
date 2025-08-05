@@ -39,16 +39,16 @@ page = [k for k, v in pages.items() if v == selected_label][0]
 
 # --------- Auto Refresh Setup (60 sec) ---------
 import time
+import time
 import streamlit as st
 
-REFRESH_SEC = 60  # seconds
+REFRESH_SEC = 60
 
 if st.button("🔄 Refresh Now"):
-    st.experimental_rerun()
+    st.rerun()
 
-# Legacy method for older Streamlit versions
-query_params = st.experimental_get_query_params()
-last_refresh = query_params.get("st_autorefresh", [None])[0]
+query_params = st.query_params
+last_refresh = query_params.get("st_autorefresh", None)
 
 try:
     last_refresh_time = float(last_refresh)
@@ -56,10 +56,8 @@ except (TypeError, ValueError):
     last_refresh_time = 0.0
 
 if time.time() - last_refresh_time > REFRESH_SEC:
-    st.experimental_set_query_params(st_autorefresh=str(time.time()))
-    st.experimental_rerun()
-
-
+    st.set_query_params(st_autorefresh=str(time.time()))
+    st.rerun()
 
 # --------- Setup Page ---------
 if page == 'Setup':
@@ -245,6 +243,7 @@ if page == 'Graph & Analysis' and st.session_state.initialized:
 # --------- Prompt Setup Warning ---------
 if not st.session_state.initialized and page != 'Setup':
     st.info("🛠️ Please complete the Setup page to initialize cell data.")
+
 
 
 
