@@ -1,3 +1,4 @@
+
 # --------- Enhanced Battery Dashboard with CSV Export ---------
 import streamlit as st
 import random
@@ -38,26 +39,14 @@ selected_label = st.sidebar.radio("Go to", list(pages.values()))
 page = [k for k, v in pages.items() if v == selected_label][0]
 
 # --------- Auto Refresh Setup (60 sec) ---------
-import time
-import time
-import streamlit as st
-
 REFRESH_SEC = 60
+if st.button("Refresh Now"):
+    st.experimental_rerun()
 
-if st.button("🔄 Refresh Now"):
-    st.rerun()
-
-query_params = st.query_params
-last_refresh = query_params.get("st_autorefresh", None)
-
-try:
-    last_refresh_time = float(last_refresh)
-except (TypeError, ValueError):
-    last_refresh_time = 0.0
-
-if time.time() - last_refresh_time > REFRESH_SEC:
-    st.set_query_params(st_autorefresh=str(time.time()))
-    st.rerun()
+st_autorefresh = st.experimental_get_query_params().get('st_autorefresh', [None])[0]
+if st_autorefresh is None or time.time() - float(st_autorefresh or 0) > REFRESH_SEC:
+    st.experimental_set_query_params(st_autorefresh=str(time.time()))
+    st.experimental_rerun()
 
 # --------- Setup Page ---------
 if page == 'Setup':
@@ -243,10 +232,3 @@ if page == 'Graph & Analysis' and st.session_state.initialized:
 # --------- Prompt Setup Warning ---------
 if not st.session_state.initialized and page != 'Setup':
     st.info("🛠️ Please complete the Setup page to initialize cell data.")
-
-
-
-
-
-
-
