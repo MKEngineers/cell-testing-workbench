@@ -48,7 +48,7 @@ if st.button("🔄 Refresh Now"):
     st.experimental_rerun()
 
 # Handle auto-refresh using query parameters safely
-query_params = st.experimental_get_query_params()
+query_params = st.query_params()
 last_refresh = query_params.get('st_autorefresh', [None])[0]
 
 # Check time difference to avoid infinite rerun loop
@@ -243,3 +243,4 @@ if page == 'Graph & Analysis' and st.session_state.initialized:
 # --------- Prompt Setup Warning ---------
 if not st.session_state.initialized and page != 'Setup':
     st.info("🛠️ Please complete the Setup page to initialize cell data.")
+
