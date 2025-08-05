@@ -39,14 +39,26 @@ selected_label = st.sidebar.radio("Go to", list(pages.values()))
 page = [k for k, v in pages.items() if v == selected_label][0]
 
 # --------- Auto Refresh Setup (60 sec) ---------
-REFRESH_SEC = 60
-if st.button("Refresh Now"):
-    st.experimental_rerun()
+import streamlit as st
+import time
 
-st_autorefresh = st.experimental_get_query_params().get('st_autorefresh', [None])[0]
-if st_autorefresh is None or time.time() - float(st_autorefresh or 0) > REFRESH_SEC:
-    st.experimental_set_query_params(st_autorefresh=str(time.time()))
-    st.experimental_rerun()
+# Time in seconds to auto-refresh
+REFRESH_SEC = 60
+
+# Manual refresh button
+if st.button("🔄 Refresh Now"):
+    st.rerun()
+
+# Auto-refresh using session state
+if "last_refresh_time" not in st.session_state:
+    st.session_state.last_refresh_time = time.time()
+
+elapsed_time = time.time() - st.session_state.last_refresh_time
+
+if elapsed_time > REFRESH_SEC:
+    st.session_state.last_refresh_time = time.time()
+    st.rerun()
+
 
 # --------- Setup Page ---------
 if page == 'Setup':
@@ -232,3 +244,4 @@ if page == 'Graph & Analysis' and st.session_state.initialized:
 # --------- Prompt Setup Warning ---------
 if not st.session_state.initialized and page != 'Setup':
     st.info("🛠️ Please complete the Setup page to initialize cell data.")
+
